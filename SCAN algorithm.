@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+void sortRequests(int requests[], int n) {
+int temp;
+for (int i = 0; i < n - 1; i++) {
+for (int j = i + 1; j < n; j++) {
+if (requests[i] > requests[j]) {
+temp = requests[i];
+requests[i] = requests[j];
+requests[j] = temp;
+}
+}
+}
+}
+void scan(int requests[], int n, int head, int totalTracks, char direction) {
+int totalHeadMovements = 0;
+int distance, curTrack;
+sortRequests(requests, n);
+if (direction == 'R' || direction == 'r') {
+for (int i = 0; i < n; i++) {
+if (requests[i] >= head) {
+curTrack = requests[i];
+distance = abs(curTrack - head);
+totalHeadMovements += distance;
+head = curTrack;
+printf("%d ", curTrack);
+}
+}
+if (head != totalTracks - 1) {
+totalHeadMovements += abs(totalTracks - 1 - head);
+head = totalTracks - 1;
+printf("%d ", head);
+}
+for (int i = n - 1; i >= 0; i--) {
+if (requests[i] < head) {
+curTrack = requests[i];
+distance = abs(curTrack - head);
+totalHeadMovements += distance;
+head = curTrack;
+printf("%d ", curTrack);
+}
+}
+} else if (direction == 'L' || direction == 'l') {
+for (int i = n - 1; i >= 0; i--) {
+if (requests[i] <= head) {
+curTrack = requests[i];
+distance = abs(curTrack - head);
+totalHeadMovements += distance;
+head = curTrack;
+printf("%d ", curTrack);
+}
+}
+if (head != 0) {
+totalHeadMovements += abs(head);
+head = 0;
+printf("%d ", head);
+}
+for (int i = 0; i < n; i++) {
+if (requests[i] > head) {
+curTrack = requests[i];
+distance = abs(curTrack - head);
+totalHeadMovements += distance;
+head = curTrack;
+printf("%d ", curTrack);
+}
+}
+}
+printf("\nTotal head movements: %d\n", totalHeadMovements);
+}
+int main() {
+int n, head, totalTracks;
+char direction;
+printf("Enter the total number of disk blocks: ");
+scanf("%d", &totalTracks);
+printf("Enter the number of requests: ");
+scanf("%d", &n);
+int requests[n];
+printf("Enter the disk request string (space-separated): ");
+for (int i = 0; i < n; i++) {
+scanf("%d", &requests[i]);
+}
+printf("Enter the starting head position: ");
+scanf("%d", &head);
+printf("Enter the direction (R for right, L for left): ");
+scanf(" %c", &direction);
+printf("\nDisk requests in the order they are served: \n");
+scan(requests, n, head, totalTracks, direction);
+return 0;
+}
