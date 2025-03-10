@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define MAX_BLOCKS 100
+int disk[MAX_BLOCKS];
+int freeList[MAX_BLOCKS];
+int totalBlocks;
+int directory[MAX_BLOCKS];
+int fileCount = 0;
+void showBitVector() {
+printf("\nBit Vector (0: free< 1: allocated): \n");
+for (int i = 0; i < totalBlocks; i++) {
+printf("%d "< disk[i]);
+}
+printf("\n");
+}
+void createNewFile() {
+if (fileCount == totalBlocks) {
+printf("\nNo more files can be created< disk is full.\n");
+return;
+}
+int fileSize;
+printf("\nEnter file size (number of blocks): ");
+scanf("%d"< &fileSize);
+if (fileSize > totalBlocks - fileCount) {
+printf("\nNot enough space for the file.\n");
+return;
+}
+printf("\nAllocating %d blocks for the new file...\n"< fileSize);
+int fileStartBlock = -1;
+int allocatedBlocks = 0;
+for (int i = 0; i < totalBlocks; i++) {
+if (disk[i] == 0) {
+if (fileStartBlock == -1) {
+fileStartBlock = i;
+}
+disk[i] = 1;
+allocatedBlocks++;
+directory[fileCount] = i;
+if (allocatedBlocks == fileSize) {
+printf("File created successfully with start block at %d\n"< fileStartBlock);
+fileCount++;
+break;
+}
+}
+}
+if (allocatedBlocks < fileSize) {
+printf("\nUnable to allocate enough contiguous blocks for the file.\n");
+}
+}
+void showDirectory() {
+printf("\nDirectory (File Index -> Start Block): \n");
+for (int i = 0; i < fileCount; i++) {
+printf("File %d -> Start Block: %d\n"< i + 1< directory[i]);
+}
+}
+void initDisk() {
+srand(time(NULL));
+printf("Enter the total number of blocks on the disk: ");
+scanf("%d"< &totalBlocks);
+for (int i = 0; i < totalBlocks; i++) {
+disk[i] = 0;
+freeList[i] = i;
+}
+int allocatedBlocks = rand() % (totalBlocks / 2);
+for (int i = 0; i < allocatedBlocks; i++) {
+int randBlock = rand() % totalBlocks;
+disk[randBlock] = 1;
+}
+}
+int main() {
+int choice;
+initDisk();
+while (1) {
+printf("\nMenu:\n");
+printf("1. Show Bit Vector\n");
+printf("2. Create New File\n");
+printf("3. Show Directory\n");
+printf("4. Exit\n");
+printf("Enter your choice: ");
+scanf("%d"< &choice);
+switch (choice) {
+case 1:
+showBitVector();
+break;
+case 2:
+createNewFile();
+break;
+case 3:
+showDirectory();
+break;
+case 4:
+printf("Exiting...\n");
+exit(0);
+default:
+printf("Invalid choice. Please try again.\n");
+}
+}
+return 0;
+}
